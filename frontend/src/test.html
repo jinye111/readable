@@ -8,24 +8,12 @@
 	<div>
 	</div>
 	<script type="text/javascript">
-		category="react"
-		api=`http://localhost:3001/${category}/posts`
-		fetch('http://localhost:3001/categories',
-	   		{
-	        	headers: { 'Authorization': 'whatever-you-want' }
-	    	}
-		).then(res=>res.json()).then(data=>console.log(data))
-
-		fetch('http://localhost:3001/posts',
-	   		{
-	        	headers: { 'Authorization': 'whatever-you-want' }
-	    	}
-		).then(res=>res.json()).then(data=>console.log(data))
-		fetch(api,
-	   		{
-	        	headers: { 'Authorization': 'whatever-you-want' }
-	    	}
-		).then(res=>res.json()).then(data=>console.log(data))
+		var posts=[{voteScore:1,id:"12345"},{voteScore:3,id:"78910"},{voteScore:0,id:"56789"}];
+		var byVote = function(a,b){
+			b.voteScore-a.voteScore;
+		}
+		posts.sort(byVote);
+		console.log(posts)
 	</script>
 </body>
 </html>

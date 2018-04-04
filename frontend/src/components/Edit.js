@@ -1,17 +1,17 @@
 import React,{ Component } from 'react';
 import { FormGroup,ControlLabel,FormControl,option,Button } from 'react-bootstrap';
-import { editPost,editComment } from '../actions'
+import { editPost,editComment,editPostIndex } from '../actions'
 import { connect } from 'react-redux'
 
 class Edit extends Component{
 
 
 	state={
-		title:"",
-		text:""
+		title:this.props.title,
+		text:this.props.text,
 	}
 
-	edit(){
+	edit(page){
 			let data=null
 			if (this.props.cate==="posts") {
 				data={body:this.state.text,title:this.state.title}
@@ -29,8 +29,14 @@ class Edit extends Component{
 		     ).then(res=>res.json()).then(data => {
 		    	console.log(data);
 		    	if(this.props.cate==="posts"){
-		    		this.props.editPost(data)
-		    		this.props.closeEditPost()
+		    		if(page==="one"){
+		    			this.props.editPost(data)
+		    			this.props.closeEditPost()
+		    		}
+		    		else{
+		    			this.props.editPostIndex(data)
+		    			this.props.closeEditPost()
+		    		}
 		    	}
 		    	else{
 		    		this.props.editComment(data)
@@ -54,7 +60,7 @@ class Edit extends Component{
 	}
 
 	render(){
-
+		console.log(this.props.id);
 		return (
 			<div>
 	    		{this.props.cate==="posts"&&<FormGroup controlId="formControlsText">
@@ -65,7 +71,7 @@ class Edit extends Component{
 	      			<ControlLabel>正文</ControlLabel>
 	      			<FormControl componentClass="textarea" name="text" placeholder="正文" value={this.state.text} onChange={this.handleClick.bind(this)}/>
 	    		</FormGroup>
-	    		<Button bsStyle="primary" onClick={this.edit.bind(this)}>提交</Button>
+	    		<Button bsStyle="primary" onClick={this.edit.bind(this,this.props.page)}>提交</Button>
     		</div>
 		)
 	}
@@ -74,6 +80,7 @@ class Edit extends Component{
 function mapDispatchToProps (dispatch) {
   return {
     editPost: (data)=>{dispatch(editPost(data))},
+    editPostIndex: (data)=>{dispatch(editPostIndex(data))},
     editComment: (data)=>{dispatch(editComment(data))}
   }  
 }

@@ -4,6 +4,7 @@ import AddComment from './addComment'
 import { showPostsDetails,showComments,delComment,editPost,addVote,addPostVote } from '../actions'
 import { Button } from 'react-bootstrap';
 import Edit from './Edit'
+import { Link } from 'react-router-dom'
 
 class PostDetail extends Component{
 
@@ -11,7 +12,9 @@ class PostDetail extends Component{
 		isAdd:false,
 		isEditPost:false,
 		isEditComment:false,
-		commentId:""
+		commentId:"",
+		title:"",
+		text:""
 	}
 
 	showAdd(){
@@ -38,10 +41,12 @@ class PostDetail extends Component{
 		})
 	}
 
-	showEditComment(id){
+	showEditComment(id,text,body){
 		this.setState({
 			isEditComment:true,
-			commentId:id
+			commentId:id,
+			text:text,
+			body:body
 		})
 	}
 
@@ -77,19 +82,20 @@ class PostDetail extends Component{
 	            headers: { 'Authorization': 'whatever-you-want','Content-Type': 'application/json' },
 	            body: JSON.stringify({option:data3})
 	        }
-	    ).then(res=>res.json()).then(data => {if(data2==='comments') this.props.addVote(data); else this.props.addPostVote(data)})		
+	    ).then(res=>res.json()).then(data => {if(data1==='comments') this.props.addVote(data); else this.props.addPostVote(data)})		
 	}
 
 	componentDidMount(){
 		let api1=`http://localhost:3001/posts/${this.props.match.params.id}`
 		let api2=`http://localhost:3001/posts/${this.props.match.params.id}/comments`
-		fetch(api1,{headers:{'Authorization': 'whatever-you-want'}}).then(res=>res.json()).then(data=>{this.props.showPostsDetails(data)})
+		fetch(api1,{headers:{'Authorization': 'whatever-you-want'}}).then(res=>res.json()).then(data=>{console.log(data);if(JSON.stringify(data)=="{}"){throw "404"} else {this.props.showPostsDetails(data);console.log("456")}}).catch(e=>(console.log(e)))
 		fetch(api2,{headers:{'Authorization': 'whatever-you-want'}}).then(res=>res.json()).then(data=>{this.props.showComments(data)})
 	}
 
 	render(){
 		return (
 			<div>
+				<Link to="/">返回</Link>
 				<div>
 					{this.props.post&&<div className="row" key={this.props.post.id}>
 						<div className="col-xs-1 col-sm-4">{this.props.post.body}</div>
@@ -110,7 +116,7 @@ class PostDetail extends Component{
 								<div className="col-xs-1 col-sm-2">time:{comment.timestamp}</div>
 								<div className="col-xs-1 col-sm-1">点赞数:{comment.voteScore}</div>
 								<div className="col-xs-1 col-sm-1" onClick={this.del.bind(this,comment.id)}>删除</div>
-								<div className="col-xs-1 col-sm-1" onClick={this.showEditComment.bind(this,comment.id)}>编辑</div>
+								<div className="col-xs-1 col-sm-1" onClick={this.showEditComment.bind(this,comment.id,comment.title,comment.body)}>编辑</div>
 								<div className="col-xs-1 col-sm-1" onClick={this.vote.bind(this,'comments',comment.id,'upVote')}>upVote</div>
 								<div className="col-xs-1 col-sm-1" onClick={this.vote.bind(this,'comments',comment.id,'downVote')}>downVote</div>
 							</div>
@@ -118,8 +124,8 @@ class PostDetail extends Component{
 					}
 					<Button bsStyle="primary" onClick={this.showAdd.bind(this)}>添加评论</Button>
 					{this.state.isAdd&&<AddComment id={this.props.post.id} closeAdd={this.closeAdd.bind(this)}/>}
-					{this.state.isEditPost&&<Edit cate="posts" id={this.props.post.id} closeEditPost={this.closeEditPost.bind(this)}/>}
-					{this.state.isEditComment&&<Edit cate="comments" id={this.state.commentId} closeEditComment={this.closeEditComment.bind(this)}/>}
+					{this.state.isEditPost&&<Edit cate="posts" id={this.props.post.id} closeEditPost={this.closeEditPost.bind(this)} title={this.props.post.title} text={this.props.post.body} page="one"/>}
+					{this.state.isEditComment&&<Edit cate="comments" id={this.state.commentId} title={this.state.title} text={this.state.body} closeEditComment={this.closeEditComment.bind(this)}/>}
 				</div>
 
 			</div>
@@ -131,7 +137,7 @@ function mapStateToProps ({ posts,comments }/*默认值加解构数组*/) {
 	console.log(comments)
   return {
     post: posts,
-    comments: comments!=null&&comments.filter((comment)=>{if (!comment.deleted) {return comment}})
+    comments: comments!=null&&comments.filter((comment)=>{if (!comment.deleted) {return comment}}),
   }  
 }
 

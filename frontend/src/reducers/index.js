@@ -1,10 +1,10 @@
-import { SHOW_POSTS,SHOW_CATEGORIES,SHOW_POSTS_BYCATEGORIES,SHOW_POSTS_DETALI,SHOW_COMMENTS,ADD_COMMENT,ADD_POST,DEL_POSTS,DEL_COMMENTS,EDIT_POSTS,EDIT_COMMENTS,ADD_VOTE,ADD_PVOTE } from '../actions'
+import { SHOW_POSTS,SHOW_CATEGORIES,SHOW_POSTS_BYCATEGORIES,SHOW_POSTS_DETALI,SHOW_COMMENTS,ADD_COMMENT,ADD_POST,DEL_POSTS,DEL_COMMENTS,EDIT_POSTS,EDIT_COMMENTS,ADD_VOTE,ADD_PVOTE,ADD_IVOTE,EDIT_IPOSTS } from '../actions'
 import { combineReducers } from 'redux'
 
 export function posts(state = null, action){
   const {posts}=action
   const {id}=action
-  console.log(state)
+  console.log(posts)
   switch(action.type){
     case SHOW_POSTS:
       return posts
@@ -25,6 +25,13 @@ export function posts(state = null, action){
 
     case ADD_PVOTE:
       return posts
+
+    case ADD_IVOTE:
+      console.log(state.filter((s)=>{if (s.id===posts.id) {return posts} return s}))
+      return state.map((s)=>{if (s.id===posts.id) {return posts} return s})
+
+    case EDIT_IPOSTS:
+      return state.map((s)=>{if (s.id===posts.id) {return posts} return s})
 
     default :
       return state

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { showPostsByCategories,showCategories } from '../actions'
 import {Link} from 'react-router-dom'
 
+
 class ShowCategorie extends Component{
 
 	componentDidMount(){
@@ -29,6 +30,7 @@ class ShowCategorie extends Component{
 	render(){
 		return(
 			<div>
+				
 				<div>全部分类</div>
 				{
 					this.props.categories&&this.props.categories.map((category)=>(

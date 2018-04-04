@@ -9,13 +9,7 @@ class showPostsByCategories extends Component{
 	}
 
 	getPosts(path){
-		let api
-		if (path==="all") {
-			api="http://localhost:3001/posts"
-		}
-		else(
-			api=`http://localhost:3001/${path}/posts`
-		)
+		let api=`http://localhost:3001/${path}/posts`
 		fetch(api,
 			{headers:{ 'Authorization': 'whatever-you-' }}
 		).then(res=>res.json()).then(data=>this.props.showPostsByCategory(data))
@@ -24,6 +18,7 @@ class showPostsByCategories extends Component{
 	render(){
 		return (
 			<div>
+			<Link to="/">返回</Link>
 			{this.props.posts&&this.props.posts.map((post)=>(
 						<Link to={`/${post.category}/${post.id}/`}><div className="row" key={post.id}>
 							<div className="col-xs-1 col-sm-4">{post.body}</div>
