@@ -1,7 +1,7 @@
 import React,{ Component } from 'react'
 import { connect } from 'react-redux'
 import AddComment from './addComment'
-import { showPostsDetails,showComments,delComment,editPost,addVote,addPostVote } from '../actions'
+import { showPostsDetails,showComments,delComment,editPost,addVote,addPostVote,delPost } from '../actions'
 import { Button } from 'react-bootstrap';
 import Edit from './Edit'
 import { Link } from 'react-router-dom'
@@ -65,6 +65,15 @@ class PostDetail extends Component{
 	    ).then(res=>res.json()).then(data => {this.props.delComment(data)})
 	}
 
+	Ddel(data){
+		fetch(`http://localhost:3001/posts/${data}`,
+	        {
+	        	method:'DELETE',
+	            headers: { 'Authorization': 'whatever-you-want' }
+	        }
+	    ).then(res=>res.json()).then(data => {this.props.history.push('/');})
+	}
+
 	edit(data){
 		fetch(`http://localhost:3001/posts/${data}`,
 	        {
@@ -88,7 +97,7 @@ class PostDetail extends Component{
 	componentDidMount(){
 		let api1=`http://localhost:3001/posts/${this.props.match.params.id}`
 		let api2=`http://localhost:3001/posts/${this.props.match.params.id}/comments`
-		fetch(api1,{headers:{'Authorization': 'whatever-you-want'}}).then(res=>res.json()).then(data=>{console.log(data);if(JSON.stringify(data)=="{}"){throw "404"} else {this.props.showPostsDetails(data);console.log("456")}}).catch(e=>(console.log(e)))
+		fetch(api1,{headers:{'Authorization': 'whatever-you-want'}}).then(res=>res.json()).then(data=>{console.log(data);if(JSON.stringify(data)=="{}"){console.log("ggh");throw "404"} else {this.props.showPostsDetails(data);console.log("456")}}).catch((error)=>{if(error==="404"){this.props.history.push('/404');}})
 		fetch(api2,{headers:{'Authorization': 'whatever-you-want'}}).then(res=>res.json()).then(data=>{this.props.showComments(data)})
 	}
 
@@ -98,12 +107,14 @@ class PostDetail extends Component{
 				<Link to="/">返回</Link>
 				<div>
 					{this.props.post&&<div className="row" key={this.props.post.id}>
+						<div className="col-xs-1 col-sm-4">{this.props.post.title}</div>
 						<div className="col-xs-1 col-sm-4">{this.props.post.body}</div>
 						<div className="col-xs-1 col-sm-1">类别:{this.props.post.category}</div>
 						<div className="col-xs-1 col-sm-1">评论数:{this.props.post.commentCount}</div>
 						<div className="col-xs-1 col-sm-2">time:{this.props.post.timestamp}</div>
 						<div className="col-xs-1 col-sm-1">点赞数:{this.props.post.voteScore}</div>
 						<div onClick={this.showEditPost.bind(this)}>编辑</div>
+						<div className="col-xs-1 col-sm-1" onClick={this.Ddel.bind(this,this.props.post.id)}>删除</div>
 						<div className="col-xs-1 col-sm-1" onClick={this.vote.bind(this,'posts',this.props.post.id,'upVote')}>upVote</div>
 						<div className="col-xs-1 col-sm-1" onClick={this.vote.bind(this,'posts',this.props.post.id,'downVote')}>downVote</div>
 					</div>}
@@ -148,8 +159,12 @@ function mapDispatchToProps (dispatch) {
     showComments:(data)=>{dispatch(showComments(data));console.log(data)},
     editPost: (data) => {dispatch(editPost(data));console.log(data)},
     addVote:(data)=>{dispatch(addVote(data));console.log(data)},
-    addPostVote:(data)=>{dispatch(addPostVote(data));console.log(data)}
+    addPostVote:(data)=>{dispatch(addPostVote(data));console.log(data)},
+    delPost: (data) => {dispatch(delPost(data));console.log(data)},
   }
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(PostDetail);
+
+
+

@@ -14,9 +14,6 @@ export const ADD_PVOTE='ADD_PVOTE'
 export const ADD_IVOTE='ADD_IVOTE'
 export const EDIT_IPOSTS='EDIT_IPOSTS'
 
-
-
-
 export function showPosts (data) {
   return {
     type: SHOW_POSTS,

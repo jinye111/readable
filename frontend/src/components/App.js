@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import logo from '../logo.svg';
 import Index from './Index'
+import Mistakes from './Mistakes'
 import showPostsByCategories from './showPostsByCategories'
 import PostDetail from './postDetail'
 import './App.css';
-import { Route } from 'react-router-dom'
+import { Route,Switch } from 'react-router-dom'
 
 class App extends Component {
 
@@ -25,9 +26,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Route exact path="/:category/:id" component={ PostDetail }/>
-        <Route exact path="/:category" component={ showPostsByCategories }/>
-        <Route exact path="/" component={Index} />
+        <Switch>
+          <Route exact path="/404" component={ Mistakes }/>
+          <Route exact path="/:category/:id" component={ PostDetail }/>
+          <Route exact path="/:category" component={ showPostsByCategories }/>
+          <Route exact path="/" component={Index} />
+        </Switch>
       </div>
     );
   }
